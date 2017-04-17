@@ -1,0 +1,176 @@
+---
+homeassistant:
+  # Name of the location where Home Assistant is running
+  name: MHome
+  # Location required to calculate the time the sun rises and sets
+  latitude: !secret latitude
+  longitude: !secret longitude
+  # Impacts weather/sunrise data
+  elevation: 18
+  # metric ftw
+  unit_system: metric
+  time_zone: Europe/Oslo
+  customize: !include customize.yaml
+
+group: !include groups.yaml
+
+# Enables the frontend
+frontend:
+
+ios:
+
+recorder:
+  purge_days: 5
+
+http:
+  # Uncomment this to add a password (recommended!)
+  api_password: !secret http_password
+  use_x_forwarded_for: True
+  base_url: https://home.means.no
+  cors_allowed_origins:
+    - google.com
+    - home-assistant.io
+
+telegram_webhooks:
+  api_key: !secret telegram_api_key
+  user_id:
+    user1: 173232900
+
+# Checks for available updates
+updater:
+
+# Discover some devices automatically
+discovery:
+
+# Allows you to issue voice commands from the frontend in enabled browsers
+conversation:
+
+# Enables support for tracking state changes over time.
+history:
+
+# View all events in a logbook
+logbook:
+
+# Track the sun
+sun:
+
+
+# Configuration Panel
+config:
+
+# Weather Prediction
+sensor:
+  - platform: yr
+  - platform: moon
+  - platform: sabnzbd
+    name: mhome
+    host: 192.168.0.2
+    port: 8090
+    api_key: !secret sabnzbd_api_key
+    monitored_variables:
+      - 'current_status'
+      - 'queue_size'
+      - 'queue_remaining'
+  - platform: plex
+    host: 192.168.0.2
+
+binary_sensor:
+  - platform: workday
+    country: 'NO'
+
+# notifications
+notify:
+  - name: telegram
+    platform: telegram
+    api_key: !secret telegram_api_key
+    chat_id: -1001105588852
+  - name: telegram_marcus
+    platform: telegram
+    api_key: !secret telegram_api_key
+    chat_id: 173232900
+
+media_player:
+  - platform: plex
+  - platform: lg_netcast
+    host: 192.168.0.132
+    access_token: !secret plex_access_token
+  - platform: apple_tv
+    host: 192.168.0.126
+    login_id: !secret lg_login_id
+
+ifttt:
+  key: !secret ifttt_key
+
+device_tracker:
+  - platform: ddwrt
+    host: 192.168.0.1
+    username: admin
+    password: !secret ddwrt_password
+  - platform: ddwrt
+    host: 192.168.0.3
+    username: admin
+    password: !secret ddwrt_password2
+
+switch:
+  - name: Loddebolt
+    platform: orvibo
+    host: 192.168.0.132
+  - platform: command_line
+    switches:
+      livingroom_light:
+        command_on: ~/.homeassistant/lights.py on
+        command_off: ~/.homeassistant/lights.py off
+        friendly_name: Family room light
+
+light:
+  platform: limitlessled
+  bridges:
+    - host: 192.168.0.120
+      groups:
+        - number: 1
+          type: white
+          name: Family room
+        - number: 1
+          type: rgbw
+          name: Office
+        - number: 4
+          type: bridge-led
+          name: Kitchen
+xiaomi:
+  gateways:
+    - sid:
+      key: !secret xiaomi_key
+
+
+tts:
+  - platform: google
+
+automation: !include automation.yaml
+
+influxdb:
+
+
+weblink:
+  entities:
+    - name: Main router
+      url: http://192.168.0.1/
+    - name: Sonarr
+      url: https://mhome.local:8989
+
+
+script:
+  goodnight:
+    alias: Goodnight
+    sequence:
+      - event: LOGBOOK ENTRY
+        event_data:
+          name: Family
+          message: Is going to bed
+      - alias: Turn off tv
+        service: media_player.turn_off
+        data:
+          entity_id: media_player.lg_tv_remote
+      - alias: Turn off light
+        service: switch.turn_off
+        data:
+          entity_id: switch.livingroom_light

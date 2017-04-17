@@ -1,0 +1,23 @@
+---
+sensor.humidity_158d000100d242:
+  friendly_name: office humidity
+sensor.temperature_158d000100d242:
+  friendly_name: office temperature
+sensor.temperature_158d000156e74b:
+  friendly_name: terrace temperature
+sensor.humidity_158d000156e74b:
+  friendly_name: terrace humidity
+sensor.temperature_158d000156e692:
+  friendly_name: closet temperature
+sensor.humidity_158d000156e692:
+  friendly_name: closet humidity
+binary_sensor.motion_sensor_158d00012593e3:
+  friendly_name: family room motion
+binary_sensor.cube_158d000101a9d6:
+  friendly_name: Cube
+binary_sensor.door_window_sensor_158d00011244fb:
+  friendly_name: Frontdoor
+binary_sensor.door_window_sensor_158d000153dc8b:
+  friendly_name: Terrace door
+light.gateway_light_f0b4299a4b2f:
+  friendly_name: Xiaomi gateway

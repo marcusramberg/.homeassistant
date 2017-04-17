@@ -1,0 +1,57 @@
+---
+default_view:
+  view: yes
+  icon: mdi:home
+  entities:
+    - group.family_room
+    - group.kitchen
+    - group.adults
+    - group.climate
+    - media_player.plex
+    - media_player.plex_web_chrome
+    - sensor.mhome_status
+    - sensor.moon
+    - sensor.yr_symbol
+    - sun.sun
+    - weblink.sonarr
+    - weblink.main_router
+    - zone.home
+    - binary_sensor.door_window_sensor_158d00011244fb
+    - light.gateway_light_f0b4299a4b2f
+    - light.office
+family_room:
+  view: yes
+  icon: mdi:sofa
+  entities:
+    - media_player.family_room_home
+    - media_player.lg_tv_remote
+    - media_player.apple_tv
+    - switch.livingroom_light
+    - light.family_room
+    - media_player.tv
+    - binary_sensor.motion_sensor_158d00012593e3
+    - binary_sensor.door_window_sensor_158d000153dc8b
+kitchen:
+  view: yes
+  icon: mdi:kettle
+  entities:
+    - media_player.kitchen_home
+    - light.kitchen
+climate:
+  view: yes
+  icon: mdi:oil-temperature
+  entities:
+    - binary_sensor.magnet_158d00011244fb
+    - sensor.humidity_158d000100d242
+    - sensor.temperature_158d000100d242
+    - sensor.temperature_158d000156e74b
+    - sensor.humidity_158d000156e74b
+    - sensor.temperature_158d000156e692
+    - sensor.humidity_158d000156e692
+    - binary_sensor.motion_158d00012593e3
+adults:
+  view: yes
+  icon: mdi:human-male-female
+  entities:
+    - device_tracker.a0d7958ae2cb
+    - device_tracker.4c7c5fc77885

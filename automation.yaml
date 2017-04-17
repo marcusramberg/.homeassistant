@@ -1,0 +1,89 @@
+---
+- alias: HomeFromSchool
+  trigger:
+    platform: state
+    entity_id: binary_sensor.door_window_sensor_158d00011244fb
+    to: 'on'
+  condition:
+    condition: and
+    conditions:
+      - condition: state
+        entity_id: 'binary_sensor.workday_sensor'
+        state: 'on'
+      - condition: time
+        after: '16:00:00'
+        before: '16:40:00'
+  action:
+    service: notify.telegram
+    data:
+      message: Eva got home from school.
+
+- alias: TerraceDoorOpened
+  trigger:
+    platform: state
+    entity_id: binary_sensor.door_window_sensor_158d000153dc8b
+    to: 'on'
+  condition:
+    condition: state
+    entity_id: group.adults
+    state: 'away'
+  action:
+    service: notify.telegram
+    data:
+      message: Terrace Door opened but no adults home.
+
+- alias: Update notifications
+  trigger:
+    - platform: state
+      entity_id: updater.updater
+  action:
+    service: notify.telegram
+    data:
+      message: 'There is a new Home Assistant release available.'
+
+- alias: Help
+  trigger:
+    platform: event
+    event_type: telegram_command
+    event_data:
+      command: '/start'
+  action:
+    - service: notify.telegram
+      data:
+        message: 'commands'
+        data:
+          keyboard:
+            - '/goodnight'
+            - '/goodmorning'
+
+- alias: Goodnight
+  trigger:
+    platform: event
+    event_type: telegram_command
+    event_data:
+      command: '/goodnight'
+  action:
+    - service: script.goodnight
+    - service: notify.telegram_marcus
+      data:
+        message: Sweet dreams
+
+- alias: "Volume stue"
+  trigger:
+    platform: event
+    event_type: cube_action
+    event_data:
+        entity_id: binary_sensor.cube_158d0001118a8a
+        action_type: rotate
+  action:
+    - service: media_player.volume_set
+      data_template:
+        entity_id: media_player.stue
+        volume_level: >
+                      {% set state = states.media_player.stue.attributes.volume_level + (trigger.event.data.action_value|float)/90 -%}
+                      {%-  if state > 1 -%}
+                         {%- set state  = 1 -%}
+                      {%-  elif state < 0 -%}
+                         {%- set state  = 0 -%}
+                      {%- endif %}
+                      {{ state }}
