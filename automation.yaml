@@ -14,9 +14,17 @@
         after: '16:00:00'
         before: '16:40:00'
   action:
-    service: notify.telegram
-    data:
-      message: Eva got home from school.
+    - service: notify.telegram
+      data:
+        message: Eva got home from school.
+    - service: notify.telegram_marcus
+      data:
+        message: Eva got home from school.
+    - service: logbook.log
+      data:
+        name: Frontdoor
+        message: Eva got home from school.
+        entity_id: binary_sensor.door_window_sensor_158d00011244fb
 
 - alias: TerraceDoorOpened
   trigger:
@@ -54,7 +62,7 @@
         data:
           keyboard:
             - '/goodnight'
-            - '/goodmorning'
+            - '/ping'
 
 - alias: Goodnight
   trigger:
@@ -67,6 +75,18 @@
     - service: notify.telegram_marcus
       data:
         message: Sweet dreams
+
+- alias: 'telegram bot that reply pong to ping'
+  hide_entity: true
+  trigger:
+    platform: event
+    event_type: telegram_command
+    event_data:
+      command: '/ping'
+  action:
+    - service: notify.telegram
+      data:
+        message: 'pong'
 
 - alias: "Volume stue"
   trigger:
@@ -87,3 +107,15 @@
                          {%- set state  = 0 -%}
                       {%- endif %}
                       {{ state }}
+- alias: Turn on lights at sunset.
+  trigger:
+    platform: sun
+    event: sunset
+    offset: "-00:15:00"
+  condition:
+    condition: state
+    entity_id: group.adults
+    state: home
+  action:
+    service: homeassistant.turn_on
+    entity_id: group.family_room_lights
