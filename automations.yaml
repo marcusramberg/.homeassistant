@@ -1,5 +1,6 @@
 ---
-- alias: HomeFromSchool
+- id: homefromschool
+  alias: HomeFromSchool
   trigger:
     platform: state
     entity_id: binary_sensor.door_window_sensor_158d00011244fb
@@ -26,7 +27,8 @@
         message: Eva got home from school.
         entity_id: binary_sensor.door_window_sensor_158d00011244fb
 
-- alias: TerraceDoorOpened
+- id: terracedooropened
+  alias: TerraceDoorOpened
   trigger:
     platform: state
     entity_id: binary_sensor.door_window_sensor_158d000153dc8b
@@ -40,7 +42,8 @@
     data:
       message: Terrace Door opened but no adults home.
 
-- alias: Update notifications
+- id: updatenotifications
+  alias: Update notifications
   trigger:
     - platform: state
       entity_id: updater.updater
@@ -49,7 +52,8 @@
     data:
       message: 'There is a new Home Assistant release available.'
 
-- alias: Help
+- id: telegramhelp
+  alias: Help
   trigger:
     platform: event
     event_type: telegram_command
@@ -64,7 +68,8 @@
             - '/goodnight'
             - '/ping'
 
-- alias: Goodnight
+- id: telegramgoodnight
+  alias: Goodnight
   trigger:
     platform: event
     event_type: telegram_command
@@ -76,7 +81,8 @@
       data:
         message: Sweet dreams
 
-- alias: 'telegram bot that reply pong to ping'
+- id: telegramping
+  alias: 'telegram bot that reply pong to ping'
   hide_entity: true
   trigger:
     platform: event
@@ -88,7 +94,8 @@
       data:
         message: 'pong'
 
-- alias: "Volume stue"
+- id: cubevolumelivingroom
+  alias: "Volume stue"
   trigger:
     platform: event
     event_type: cube_action
@@ -107,11 +114,12 @@
                          {%- set state  = 0 -%}
                       {%- endif %}
                       {{ state }}
-- alias: Turn on lights at sunset.
+- id: lightsonatsunset
+  alias: Turn on lights at sunset.
   trigger:
     platform: sun
     event: sunset
-    offset: "-00:15:00"
+    offset: "-00:45:00"
   condition:
     condition: state
     entity_id: group.adults

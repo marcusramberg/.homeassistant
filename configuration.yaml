@@ -19,6 +19,9 @@ frontend:
 
 ios:
 
+emulated_hue:
+  listen_port: 80
+
 recorder:
   purge_days: 5
 
@@ -31,10 +34,13 @@ http:
     - google.com
     - home-assistant.io
 
-telegram_webhooks:
+telegram_bot:
+  platform: webhooks
   api_key: !secret telegram_api_key
-  user_id:
-    user1: 173232900
+  allowed_chat_ids:
+    - 173232900
+    - -217446614
+    - 357286587
 
 # Checks for available updates
 updater:
@@ -64,7 +70,7 @@ sensor:
   - platform: moon
   - platform: sabnzbd
     name: mhome
-    host: 192.168.0.2
+    host: 192.168.0.20
     port: 8090
     api_key: !secret sabnzbd_api_key
     monitored_variables:
@@ -72,18 +78,23 @@ sensor:
       - 'queue_size'
       - 'queue_remaining'
   - platform: plex
-    host: 192.168.0.2
+    host: 192.168.0.20
 
 binary_sensor:
   - platform: workday
     country: 'NO'
+  - platform: ping
+    host: 192.168.0.20
+    name: Ping MHub
+maxcube:
+  host: 192.168.0.101
 
 # notifications
 notify:
   - name: telegram
     platform: telegram
     api_key: !secret telegram_api_key
-    chat_id: -1001105588852
+    chat_id: -217446614
   - name: telegram_marcus
     platform: telegram
     api_key: !secret telegram_api_key
@@ -118,24 +129,64 @@ switch:
   - platform: command_line
     switches:
       livingroom_light:
-        command_on: ~/.homeassistant/lights.py on
-        command_off: ~/.homeassistant/lights.py off
+        command_on: nodejs ~/.homeassistant/lights.js on
+        command_off: nodejs ~/.homeassistant/lights.js off
         friendly_name: Family room light
+  - platform: broadlink
+    host: 192.168.0.30
+    mac: 34:EA:34:E4:7C:CE
+    type: rm2
+    switches:
+      eva_room:
+        friendly_name:  Eva's room
+        command_off: '6RRGAN8JFgkWCQkWCRYJFgkWCRYWCQkWFgkWCRYJCRYJFhYJFgkJFhYJFgkJFhYJCRYJFhYJFgkWCRYJCRYJFhYJFgkWCQkAAUjpFEYA3wkWCRYJCRYJFgkWCRYJFhYJCRYWCRYJFgkJFgkWFgkWCQkWFgkWCQkWFgkJFgkWFgkWCRYJFgkJFgkWFgkWCRYJCQABSOkURgDfCRYJFgkJFgkWCRYJFgkWFgkJFhYJFgkWCQkWCRYWCRYJCRYWCRYJCRYWCQkWCRYWCRYJFgkWCQkWCRYWCRYJFgkJAAFI6RRGAN8JFgkWCQkWCRYJFgkWCRYWCQkWFgkWCRYJCRYJFhYJFgkJFhYJFgkJFhYJCRYJFhYJFgkWCRYJCRYJFhYJFgkWCQkAAUjpFEYA3wkWCRYJCRYJFgkWCRYJFhYJCRYWCRYJFgkJFgkWFgkWCQkWFgkWCQkWFgkJFgkWFgkWCRYJFgkJFgkWFgkWCRYJCQABSOkURgDfCRYJFgkJFgkWCRYJFgkWFgkJFhYJFgkWCQkWCRYWCRYJCRYWCRYJCRYWCQkWCRYWCRYJFgkWCQkWCRYWCRYJFgkJAAFI'
+        command_on: '6RRGAN8JCRYWCQkWFgkJFgkWFgkJFhYJFgkJFgkWFgkWCQkWFgkJFhYJCRYWCRYJFgkWCQkWFgkWCRYJCRYWCRYJFgkJFgkAAUjpFEYA3wkJFhYJCRYWCQkWCRYWCQkWFgkWCQkWCRYWCRYJCRYWCQkWFgkJFhYJFgkWCRYJCRYWCRYJFgkJFhYJFgkWCQkWCQABSOkURgDfCQkWFgkJFhYJCRYJFhYJCRYWCRYJCRYJFhYJFgkJFhYJCRYWCQkWFgkWCRYJFgkJFhYJFgkWCQkWFgkWCRYJCRYJAAFI6RRGAN8JCRYWCQkWFgkJFgkWFgkJFhYJFgkJFgkWFgkWCQkWFgkJFhYJCRYWCRYJFgkWCQkWFgkWCRYJCRYWCRYJFgkJFgkAAUjpFEYA3wkJFhYJCRYWCQkWCRYWCQkWFgkWCQkWCRYWCRYJCRYWCQkWFgkJFhYJFgkWCRYJCRYWCRYJFgkJFhYJFgkWCQkWCQABSOkURgDfCQkWFgkJFhYJCRYJFhYJCRYWCRYJCRYJFhYJFgkJFhYJCRYWCQkWFgkWCRYJFgkJFhYJFgkWCQkWFgkWCRYJCRYJAAFI'
+      milla_room:
+        friendly_name:  Milla's room
+        command_on: '6RRGAN8JFgkWCRYJFgkJFhYJFgkJFhYJFgkJFgkWFgkWCRYJFgkJFhYJCRYWCRYJCRYWCRYJCRYJFhYJFgkWCRYJCRYJFgkAAUjpFEYA3wkWCRYJFgkWCQkWFgkWCQkWFgkWCQkWCRYWCRYJFgkWCQkWFgkJFhYJFgkJFhYJFgkJFgkWFgkWCRYJFgkJFgkWCQABSOkURgDfCRYJFgkWCRYJCRYWCRYJCRYWCRYJCRYJFhYJFgkWCRYJCRYWCQkWFgkWCQkWFgkWCQkWCRYWCRYJFgkWCQkWCRYJAAFI6RRGAN8JFgkWCRYJFgkJFhYJFgkJFhYJFgkJFgkWFgkWCRYJFgkJFhYJCRYWCRYJCRYWCRYJCRYJFhYJFgkWCRYJCRYJFgkAAUjpFEYA3wkWCRYJFgkWCQkWFgkWCQkWFgkWCQkWCRYWCRYJFgkWCQkWFgkJFhYJFgkJFhYJFgkJFgkWFgkWCRYJFgkJFgkWCQABSOkURgDfCRYJFgkWCRYJCRYWCRYJCRYWCRYJCRYJFhYJFgkWCRYJCRYWCQkWFgkWCQkWFgkWCQkWCRYWCRYJFgkWCQkWCRYJAAFI'
+        command_off: '6RRGAN8JCRYJFgkWCRYJFhYJCRYJFgkWFgkJFhYJFgkWCQkWFgkWCRYJFgkJFgkWCRYJFgkWFgkJFgkWCRYJFhYJFgkWCQkAAUjpFEYA3wkJFgkWCRYJFgkWFgkJFgkWCRYWCQkWFgkWCRYJCRYWCRYJFgkWCQkWCRYJFgkWCRYWCQkWCRYJFgkWFgkWCRYJCQABSOkURgDfCQkWCRYJFgkWCRYWCQkWCRYJFhYJCRYWCRYJFgkJFhYJFgkWCRYJCRYJFgkWCRYJFhYJCRYJFgkWCRYWCRYJFgkJAAFI6RRGAN8JCRYJFgkWCRYJFhYJCRYJFgkWFgkJFhYJFgkWCQkWFgkWCRYJFgkJFgkWCRYJFgkWFgkJFgkWCRYJFhYJFgkWCQkAAUjpFEYA3wkJFgkWCRYJFgkWFgkJFgkWCRYWCQkWFgkWCRYJCRYWCRYJFgkWCQkWCRYJFgkWCRYWCQkWCRYJFgkWFgkWCRYJCQABSOkURgDfCQkWCRYJFgkWCRYWCQkWCRYJFhYJCRYWCRYJFgkJFhYJFgkWCRYJCRYJFgkWCRYJFhYJCRYJFgkWCRYWCRYJFgkJAAFI'
+      master_bedroom:
+        friendly_name: Master bedroom
+        command_on: '6RRGAN8JCRYJFgkWCRYWCQkWCRYJFgkWFgkJFhYJFgkJFhYJCRYWCRYJCRYJFgkWCRYWCQkWFgkJFhYJFgkJFhYJCRYWCQkAAUjpFEYA3wkJFgkWCRYJFhYJCRYJFgkWCRYWCQkWFgkWCQkWFgkJFhYJFgkJFgkWCRYJFhYJCRYWCQkWFgkWCQkWFgkJFhYJCQABSOkURgDfCQkWCRYJFgkWFgkJFgkWCRYJFhYJCRYWCRYJCRYWCQkWFgkWCQkWCRYJFgkWFgkJFhYJCRYWCRYJCRYWCQkWFgkJAAFI6RRGAN8JCRYJFgkWCRYWCQkWCRYJFgkWFgkJFhYJFgkJFhYJCRYWCRYJCRYJFgkWCRYWCQkWFgkJFhYJFgkJFhYJCRYWCQkAAUjpFEYA3wkJFgkWCRYJFhYJCRYJFgkWCRYWCQkWFgkWCQkWFgkJFhYJFgkJFgkWCRYJFhYJCRYWCQkWFgkWCQkWFgkJFhYJCQABSOkURgDfCQkWCRYJFgkWFgkJFgkWCRYJFhYJCRYWCRYJCRYWCQkWFgkWCQkWCRYJFgkWFgkJFhYJCRYWCRYJCRYWCQkWFgkJAAFI'
+        command_off: '6RRGAN8JFgkWCQkWCRYJFgkWFgkWCQkWFgkWCQkWFgkWCQkWCRYJFgkWCRYJFgkWCRYWCQkWFgkJFgkWFgkWCRYJCRYJFgkAAUjpFEYA3wkWCRYJCRYJFgkWCRYWCRYJCRYWCRYJCRYWCRYJCRYJFgkWCRYJFgkWCRYJFhYJCRYWCQkWCRYWCRYJFgkJFgkWCQABSOkURgDfCRYJFgkJFgkWCRYJFhYJFgkJFhYJFgkJFhYJFgkJFgkWCRYJFgkWCRYJFgkWFgkJFhYJCRYJFhYJFgkWCQkWCRYJAAFI6RRGAN8JFgkWCQkWCRYJFgkWFgkWCQkWFgkWCQkWFgkWCQkWCRYJFgkWCRYJFgkWCRYWCQkWFgkJFgkWFgkWCRYJCRYJFgkAAUjpFEYA3wkWCRYJCRYJFgkWCRYWCRYJCRYWCRYJCRYWCRYJCRYJFgkWCRYJFgkWCRYJFhYJCRYWCQkWCRYWCRYJFgkJFgkWCQABSOkURgDfCRYJFgkJFgkWCRYJFhYJFgkJFhYJFgkJFhYJFgkJFgkWCRYJFgkWCRYJFgkWFgkJFhYJCRYJFhYJFgkWCQkWCRYJAAFI'
+      tv_lg:
+        friendly_name: "Tv Power"
+        command_off: 'JgBYAAABIJISExETETcSEhISEhQQFBETETcROBESEjcRNhM1EjcTNRMTERISNxEUERMSExE2EjYSNhM2EhIROBE3ETcREhITEgAFGwABH0oSAAwzAAEfShEADQU='
+        command_on: 'JgBYAAABIJISExETETcSEhISEhQQFBETETcROBESEjcRNhM1EjcTNRMTERISNxEUERMSExE2EjYSNhM2EhIROBE3ETcREhITEgAFGwABH0oSAAwzAAEfShEADQU='
+
+      tv_lg_hdmi1_hdmi2:
+        friendly_name: "TV HDMI12"
+        command_on: 'JgBIAAABIZMRExITEjYSExMRERURExEUEDkRNxEUEjYSNhM3ETcSNxITETgSNhI2ExMQExE4ETYSNxIUERMSExE4ETcRFBETEQANBQ=='
+        command_off: 'JgBQAAABJJMSEhISETgSEhITEBMSEhMSETcSNxMREjcSNxI3EjcSOBETERITNhM2EhITERM2EzcRNxI3ExISEhI3EjcRExETEgAFLQABJEoRAA0FAAAAAAAAAAA='
+
+      tv_lg_hdmi3:
+        friendly_name: "TV HDMI3"
+        command_on: 'JgBIAAABIZMSFBISETgRExEUERQQFBETEjcTNhMSETgRNxE3EjcROBM2ERMSFBE4ERMSNxM2EjUSFBE2ETgRExM2ExITEhATEwANBQ=='
+
+      tv_lg_av1_av2:
+        friendly_name: "LG Tv AV12"
+        command_on: 'JgBIAAABIpQPFBITETgSEw8UEhQSEhEVDzgSOBAUETgQOQ84EjgRNxITETgSExA5EDgREhI3EhMROBMSEDkQFBETEjYTEhE4EQANBQ=='
+        command_off: 'JgBIAAABH5YPFBETETgUERAUEBURFBATETgROBEUETcSNxE4ETcSOBISEBUQFREUEjUSFBA5ETcRNxE4ETkQOBAUEjcRFRAUEQANBQ=='
 
 light:
-  platform: limitlessled
-  bridges:
-    - host: 192.168.0.120
-      groups:
-        - number: 1
-          type: white
-          name: Family room
-        - number: 1
-          type: rgbw
-          name: Office
-        - number: 4
-          type: bridge-led
-          name: Kitchen
+  - platform: limitlessled
+    bridges:
+      - host: 192.168.0.120
+        groups:
+          - number: 1
+            type: rgbw
+            name: Office
+          - number: 2
+            type: white
+            name: Family room
+          - number: 4
+            type: bridge-led
+            name: Kitchen
+  - platform: yeelight
+    devices: 
+      192.168.0.131:
+        name: Living Room
+
 xiaomi:
   gateways:
     - sid:
@@ -145,7 +196,7 @@ xiaomi:
 tts:
   - platform: google
 
-automation: !include automation.yaml
+automation: !include automations.yaml
 
 influxdb:
 
