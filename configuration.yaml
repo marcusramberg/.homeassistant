@@ -19,11 +19,19 @@ frontend:
 
 ios:
 
-emulated_hue:
-  listen_port: 80
-
+map:
 recorder:
-  purge_days: 5
+  purge_keep_days: 7
+  purge_interval: 1
+
+google_assistant:
+  project_id: home-183813
+  client_id: !secret ga_client_id
+  access_token: !secret ga_client_secret
+  exposed_domains:
+  - switch
+  - light
+  - group
 
 http:
   # Uncomment this to add a password (recommended!)
@@ -102,12 +110,15 @@ notify:
 
 media_player:
   - platform: plex
+  - platform: braviatv
+    host: 192.168.0.139
   - platform: lg_netcast
     host: 192.168.0.132
-    access_token: !secret plex_access_token
-  - platform: apple_tv
-    host: 192.168.0.126
-    login_id: !secret lg_login_id
+    access_token: !secret lg_login_id
+
+apple_tv:
+  host: 192.168.0.126
+  login_id: !secret appletv_login_id
 
 ifttt:
   key: !secret ifttt_key
@@ -183,14 +194,15 @@ light:
             type: bridge-led
             name: Kitchen
   - platform: yeelight
-    devices: 
+    devices:
       192.168.0.131:
         name: Living Room
 
-xiaomi:
+xiaomi_aqara:
+  discovery_retry: 10
   gateways:
-    - sid:
-      key: !secret xiaomi_key
+    - key: !secret xiaomi_key
+      mac:
 
 
 tts:

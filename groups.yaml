@@ -27,17 +27,23 @@ default_view:
     - light.office
     - switch.evas_room
     - switch.millas_room
+master_bedroom:
+  view: yes
+  icon: mdi:seat-flat
+  entities:
+    - media_player.lg_tv_remote
     - switch.master_bedroom
+    - media_player.bedroom
+    - switch.tv_power
 family_room:
   view: yes
   icon: mdi:sofa
   entities:
     - media_player.family_room_home
-    - media_player.lg_tv_remote
     - media_player.apple_tv
+    - media_player.bravia_4k_gb
     - group.family_room_lights
     - media_player.tv
-    - switch.tv_power
     - binary_sensor.motion_sensor_158d00012593e3
     - binary_sensor.door_window_sensor_158d000153dc8b
 kitchen:
